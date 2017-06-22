@@ -1,0 +1,70 @@
+# 推荐使用yaml作为配置文件格式，因为xml显得冗长，properties没有层级结构，
+# yaml刚好弥补了两者的缺点，这也是Spring Boot默认就支持yaml的原因。
+
+
+## 由于Spring Boot的自动配置特性，我们不用新建一个DataSource类，Spring Boot
+## 会自动加载配置文件并根据配置文件信息建立数据库连接池，十分便捷。
+spring:
+  # 数据库配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/test
+    username: root
+    password: wang
+    driver-class-name: org.gjt.mm.mysql.Driver
+
+  # 配置redis (作为2级缓存)
+  redis:
+    # redis数据库索引(默认为0)，我们使用索引为3的数据库，避免和其他数据库冲突
+    database: 3
+    # redis服务器地址
+    host: localhost
+    # redis端口 (默认为6379)
+    port: 6379
+    # redis访问密码 (默认为空)
+    password:
+    # redis连接超时时间 (单位为毫秒)
+    timeout: 0
+    # redis连接池配置
+    pool:
+      # 最大可用连接数 (默认为8，负数表示无限制)
+      max-active: 8
+      # 最大空闲连接数 (默认为8，负数表示无限制)
+      max-idle: 8
+      # 最小空闲连接数 (默认为0，该值只有为正数才有作用)
+      min-idle: 0
+      # 从连接池中获取连接最大等待时间 (默认为-1，单位为毫秒，负数表示无限)
+      max-wait: -1
+
+# 配置mybatis
+mybatis:
+  # 配置映射类所在包名
+  type-aliases-package: online.wangxuan.entity
+  # 配置mapper xml所在路径，这里是一个数组
+  mapper-locations:
+    - mapper/ProductMapper.xml
+
+# 服务器配置
+server:
+    port: 9999
+
+# 日志配置
+logging:
+  level:
+    online.wangxuan: DEBUG
+
+
+---
+
+# 测试环境下的配置
+
+# 测试时使用内存数据库，这里我们使用H2作为测试数据库
+spring:
+  profiles: test
+  # 数据库配置
+  datasource:
+    url: jdbc:h2:mem:test
+    username: root
+    password: 123456
+    driver-class-name: org.h2.Driver
+    schema: classpath:schema.sql
+    data: classpath:data.sql
